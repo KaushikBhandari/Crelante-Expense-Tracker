@@ -10,7 +10,7 @@ const LOGO_B64 = "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAA
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   :root {
     --bg: #0c0c0c; --s1: #141414; --s2: #1c1c1c; --s3: #232323; --s4: #2a2a2a;
     --orange: #f04e23; --orange-soft: rgba(240,78,35,0.14); --orange-mid: rgba(240,78,35,0.35);
@@ -21,7 +21,7 @@ const css = `
     --modal-overlay: rgba(0,0,0,0.72);
     --toggle-bg: #232323; --toggle-border: rgba(255,255,255,0.1); --toggle-icon: #aaa;
   }
- 
+
   html[data-theme="dark"], html[data-theme="dark"] body {
     --bg: #0c0c0c;
     --s1: #141414;
@@ -45,7 +45,7 @@ const css = `
     --toggle-border: rgba(255,255,255,0.1);
     --toggle-icon: #aaa;
   }
- 
+
   html[data-theme="light"], html[data-theme="light"] body {
     --bg: #f4f2ee;
     --s1: #ffffff;
@@ -69,9 +69,9 @@ const css = `
     --toggle-border: rgba(0,0,0,0.12);
     --toggle-icon: #555;
   }
- 
+
   body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; transition: background 0.25s, color 0.25s; }
- 
+
   .theme-toggle {
     margin-left: auto;
     display: flex; align-items: center; gap: 6px;
@@ -109,7 +109,7 @@ const css = `
   .brand-name span { color: var(--orange); }
   .header-right { margin-left: auto; display: flex; gap: 10px; }
   .summary-bar {
-    display: grid; grid-template-columns: repeat(4, 1fr);
+    display: grid; grid-template-columns: repeat(6, 1fr);
     gap: 0; border-bottom: 0.5px solid var(--border);
   }
   .sum-card {
@@ -209,7 +209,7 @@ const css = `
   }
   .modal-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--orange); }
   .modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
- 
+
   /* ── MOBILE RESPONSIVE ── */
   @media (max-width: 768px) {
     .header { padding: 14px 16px; gap: 10px; }
@@ -217,34 +217,34 @@ const css = `
     .brand-name { font-size: 14px; }
     .brand-sub { font-size: 9px; }
     .toggle-label { display: none; }
- 
-    .summary-bar { grid-template-columns: 1fr 1fr; }
-    .sum-card { padding: 14px 16px; border-bottom: 0.5px solid var(--border); }
-    .sum-card:nth-child(odd) { border-right: 0.5px solid var(--border); }
-    .sum-card:nth-child(even) { border-right: none; }
+
+    .summary-bar { grid-template-columns: 1fr 1fr 1fr; }
+    .sum-card { padding: 12px 14px; border-bottom: 0.5px solid var(--border); }
+    .sum-card:nth-child(3n) { border-right: none; }
+    .sum-card:nth-child(3n+1), .sum-card:nth-child(3n+2) { border-right: 0.5px solid var(--border); }
     .sum-val { font-size: 17px; }
- 
+
     .tabs-row { padding: 0 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .tab-btn { padding: 12px 14px; font-size: 10px; white-space: nowrap; }
- 
+
     .panel { padding: 14px 12px; }
     .form-block { padding: 14px 14px; }
- 
+
     .fgrid-2,
     .fgrid-3,
     .fgrid-4 { grid-template-columns: 1fr; }
- 
+
     .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
     table { min-width: 520px; }
- 
+
     .modal { width: calc(100vw - 32px); padding: 18px 16px; }
- 
+
     td, th { padding: 10px 12px; }
     td { font-size: 12px; }
- 
+
     .btn-primary { width: 100%; margin-top: 4px; }
   }
- 
+
   @media (max-width: 420px) {
     .sum-val { font-size: 15px; }
     .header { padding: 12px 12px; }
@@ -294,51 +294,59 @@ function EditModal({ fields, values, onSave, onClose, title }) {
 
 // ─── CLIENT PANEL ─────────────────────────────────────────────
 function ClientPanel({ clients, onAdd, onDelete, onUpdate }) {
-  const [form, setForm] = useState({ client: "", desc: "", amount: "", revenue: "", domain: "no" });
+  const [form, setForm] = useState({ client: "", desc: "", quote: "", amount: "", revenue: "", domain: "no" });
   const [editing, setEditing] = useState(null);
 
   const add = () => {
     if (!form.client.trim()) return;
-    onAdd({ ...form, amount: parseFloat(form.amount) || 0, revenue: parseFloat(form.revenue) || 0 });
-    setForm({ client: "", desc: "", amount: "", revenue: "", domain: "no" });
+    onAdd({ ...form, quote: parseFloat(form.quote) || 0, amount: parseFloat(form.amount) || 0, revenue: parseFloat(form.revenue) || 0 });
+    setForm({ client: "", desc: "", quote: "", amount: "", revenue: "", domain: "no" });
   };
 
   return (
     <div className="panel">
       <div className="form-block">
         <div className="form-block-title">Add Client Expense</div>
-        <div className="fgrid fgrid-4" style={{ marginBottom: 12 }}>
+        <div className="fgrid fgrid-3" style={{ marginBottom: 12 }}>
           <div className="field"><label>Client Name</label><input placeholder="e.g. Acme Corp" value={form.client} onChange={(e) => setForm({ ...form, client: e.target.value })} /></div>
           <div className="field"><label>Description</label><input placeholder="e.g. Facebook Ads" value={form.desc} onChange={(e) => setForm({ ...form, desc: e.target.value })} /></div>
-          <div className="field"><label>Revenue (₹)</label><input type="number" placeholder="0" value={form.revenue} onChange={(e) => setForm({ ...form, revenue: e.target.value })} /></div>
-          <div className="field"><label>Expense (₹)</label><input type="number" placeholder="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></div>
+          <div className="field"><label>Quote Amount (₹)</label><input type="number" placeholder="Total quoted to client" value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} /></div>
         </div>
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
-          <div className="field" style={{ width: 160 }}>
-            <label>Domain Included?</label>
+        <div className="fgrid fgrid-3" style={{ marginBottom: 12 }}>
+          <div className="field"><label>Amount Received (₹)</label><input type="number" placeholder="Advance / payment received" value={form.revenue} onChange={(e) => setForm({ ...form, revenue: e.target.value })} /></div>
+          <div className="field"><label>Expense (₹)</label><input type="number" placeholder="Your cost for this client" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></div>
+          <div className="field"><label>Domain Included?</label>
             <select value={form.domain} onChange={(e) => setForm({ ...form, domain: e.target.value })}>
               <option value="no">No</option>
               <option value="yes">Yes</option>
             </select>
           </div>
-          <button className="btn btn-primary" onClick={add} style={{ marginBottom: 1 }}>Add Entry</button>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <button className="btn btn-primary" onClick={add}>Add Entry</button>
         </div>
       </div>
 
       <div className="tbl-wrap">
         <div className="tbl-head">Client Entries — {clients.length} record{clients.length !== 1 ? "s" : ""}</div>
         <table>
-          <thead><tr><th>Client</th><th>Description</th><th>Revenue</th><th>Expense</th><th>P / L</th><th>Domain</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Client</th><th>Description</th><th>Quote</th><th>Received</th><th>Balance Due</th><th>Expense</th><th>P / L</th><th>Domain</th><th>Actions</th></tr></thead>
           <tbody>
-            {clients.length === 0 && <tr className="empty-row"><td colSpan={7}>No client entries yet — add one above.</td></tr>}
+            {clients.length === 0 && <tr className="empty-row"><td colSpan={9}>No client entries yet — add one above.</td></tr>}
             {clients.map((c) => {
-              const pl = (c.revenue || 0) - (c.amount || 0);
+              const received = c.revenue || 0;
+              const expense = c.amount || 0;
+              const quote = c.quote || 0;
+              const balanceDue = quote - received;
+              const pl = received - expense;
               return (
                 <tr key={c.id}>
                   <td><strong>{c.client}</strong></td>
                   <td className="muted">{c.desc || "—"}</td>
-                  <td className="mono green">{fmt(c.revenue || 0)}</td>
-                  <td className="mono red">{fmt(c.amount || 0)}</td>
+                  <td className="mono orange">{fmt(quote)}</td>
+                  <td className="mono green">{fmt(received)}</td>
+                  <td className={`mono ${balanceDue > 0 ? "red" : "green"}`}>{balanceDue > 0 ? fmt(balanceDue) + " left" : "Fully Paid"}</td>
+                  <td className="mono red">{fmt(expense)}</td>
                   <td className={`mono ${pl >= 0 ? "green" : "red"}`}>{pl >= 0 ? "+" : "−"}{fmt(pl)}</td>
                   <td><span className={`badge badge-${c.domain}`}>{(c.domain || "no").toUpperCase()}</span></td>
                   <td style={{ display: "flex", gap: 6 }}>
@@ -358,12 +366,13 @@ function ClientPanel({ clients, onAdd, onDelete, onUpdate }) {
           fields={[
             { key: "client", label: "Client Name" },
             { key: "desc", label: "Description" },
-            { key: "revenue", label: "Revenue (₹)", type: "number" },
+            { key: "quote", label: "Quote Amount (₹)", type: "number" },
+            { key: "revenue", label: "Amount Received (₹)", type: "number" },
             { key: "amount", label: "Expense (₹)", type: "number" },
             { key: "domain", label: "Domain Included?", type: "select", options: ["no", "yes"] },
           ]}
           values={editing}
-          onSave={(vals) => { onUpdate(editing.id, { ...vals, amount: parseFloat(vals.amount)||0, revenue: parseFloat(vals.revenue)||0 }); setEditing(null); }}
+          onSave={(vals) => { onUpdate(editing.id, { ...vals, quote: parseFloat(vals.quote)||0, amount: parseFloat(vals.amount)||0, revenue: parseFloat(vals.revenue)||0 }); setEditing(null); }}
           onClose={() => setEditing(null)}
         />
       )}
@@ -601,14 +610,16 @@ export default function App() {
   const fsUpdate = (col, id, data) => updateDoc(doc(db, col, id), data);
 
   // ── Derived totals ──
-  const totalRevenue = clients.reduce((s, c) => s + (c.revenue || 0), 0);
-  const clientExp    = clients.reduce((s, c) => s + (c.amount  || 0), 0);
-  const companyExp   = company.reduce((s, e) => s + (e.amount  || 0), 0);
-  const salaryPaid   = payments.reduce((s, p) => s + (p.amount || 0), 0);
-  const totalSalary  = team.reduce((s, m) => s + (m.salary || 0), 0);
+  const totalQuoted   = clients.reduce((s, c) => s + (c.quote   || 0), 0);
+  const totalReceived = clients.reduce((s, c) => s + (c.revenue || 0), 0);
+  const totalBalanceDue = totalQuoted - totalReceived;
+  const clientExp     = clients.reduce((s, c) => s + (c.amount  || 0), 0);
+  const companyExp    = company.reduce((s, e) => s + (e.amount  || 0), 0);
+  const salaryPaid    = payments.reduce((s, p) => s + (p.amount || 0), 0);
+  const totalSalary   = team.reduce((s, m) => s + (m.salary || 0), 0);
   const salaryPending = Math.max(0, totalSalary - salaryPaid);
   const totalExp = clientExp + companyExp + salaryPaid;
-  const pl = totalRevenue - totalExp;
+  const pl = totalReceived - totalExp;
 
   const TABS = [
     { id: "client",  label: "Client Expenses" },
@@ -651,8 +662,16 @@ export default function App() {
 
         <div className="summary-bar">
           <div className="sum-card">
-            <div className="sum-label">Total Revenue</div>
-            <div className="sum-val orange">{fmt(totalRevenue)}</div>
+            <div className="sum-label">Total Quoted</div>
+            <div className="sum-val orange">{fmt(totalQuoted)}</div>
+          </div>
+          <div className="sum-card">
+            <div className="sum-label">Amount Received</div>
+            <div className="sum-val green">{fmt(totalReceived)}</div>
+          </div>
+          <div className="sum-card">
+            <div className="sum-label">Balance Due</div>
+            <div className="sum-val red">{fmt(totalBalanceDue)}</div>
           </div>
           <div className="sum-card">
             <div className="sum-label">Total Expenses</div>
